@@ -1,0 +1,12 @@
+# If a deployment is requested, it's verified against this project name.
+# Release branches for this project should follow branch name:
+#   api/release/x.y.z
+PROJECT_NAME: rabbit
+
+# This will automatically be suffixed with the environment
+ECS_CLUSTER_NAME: api
+ECS_SERVICE_NAME: api-django
+
+# Name of the docker container, this will
+# be prefixed with the repo path, i.e. xxx.ecr.aws.com/<DOCKER_IMAGE_NAME>:<tag>
+DOCKER_IMAGE_NAME: api
