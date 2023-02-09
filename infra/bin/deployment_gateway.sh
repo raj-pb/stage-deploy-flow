@@ -50,8 +50,11 @@ root_dir=$(git rev-parse --show-toplevel)
 find "$root_dir" -type d -mindepth 1 -maxdepth 10 | while read -r dir; do
   if [ -f "$dir/manifest.yaml" ]; then
     project_name=$(yq eval '.PROJECT_NAME' "$dir/manifest.yaml")
-    latest_project_version=$(git branch -r | grep "$project_name/release/" | sort -V | tail -n1)
-    echo $project_name
-    echo $latest_project_version
+    project_branch=$(git branch -r | grep "$project_name/release/" | sort -V | tail -n1 | sed 's/^[[:space:]]*//')
+    pushd "$dir" > /dev/null || exit
+    if ! git diff origin/develop "$project_branch" --quiet; then
+      echo "Difference found in $dir"
+    fi
+    popd > /dev/null || exit
   fi
 done
