@@ -55,6 +55,7 @@ fi
 
 
 root_dir=$(git rev-parse --show-toplevel)
+current_branch=$(git rev-parse --abbrev-ref HEAD)
 
 hook_path="$(git rev-parse --git-dir)/hooks/post-update"
 
@@ -73,6 +74,7 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
       git commit -m "[Version bump] $project_branch -> $new_branch"
       git tag "$new_tag"
       git push -u origin "$new_tag" "$new_branch"
+      git checkout "$current_branch"
     fi
     popd > /dev/null || exit
   fi
