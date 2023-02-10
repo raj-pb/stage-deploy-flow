@@ -14,7 +14,6 @@ while [ $# -gt 0 ]; do
       shift 2
       ;;
     -r|--rollback)
-      git checkout develop
       branches="$(git branch | sed 's/^..//' | grep "/release/$2")";
       for branch in $branches; do echo "$branch" && git push origin --delete "$branch" && git branch -D "$branch"; done
       tags="$(git tag -l | grep "$2")"
@@ -56,26 +55,33 @@ fi
 
 root_dir=$(git rev-parse --show-toplevel)
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-
 hook_path="$(git rev-parse --git-dir)/hooks/post-update"
+
+# Update the version for a particular project, commit and push to a new branch
+branch_and_commit() {
+  project_dir=$1
+  project_name=$(yq eval '.PROJECT_NAME' "$project_dir/manifest.yaml")
+  project_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n1)
+  pushd "$project_dir" > /dev/null || exit
+  if ! git diff --quiet origin/develop "$project_branch" -- "$project_dir"; then
+    git stash
+    new_branch="$project_name/release/$release_version"
+    new_tag="tags/$project_name/release/$release_version-rc.1"
+    git checkout -b "$new_branch" origin/develop
+    echo "$release_version" > VERSION
+    git add VERSION
+    git commit -m "[Version bump] $project_branch -> $new_branch"
+    git tag "$new_tag"
+    git push -u origin "$new_tag" "$new_branch"
+    git checkout "$current_branch"
+    git stash pop
+  fi
+  popd > /dev/null || exit
+}
 
 # Check if there are git diff for each project, and bump the version if there is
 find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
   if [ -f "$project_dir/manifest.yaml" ]; then
-    project_name=$(yq eval '.PROJECT_NAME' "$project_dir/manifest.yaml")
-    project_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n1)
-    pushd "$project_dir" > /dev/null || exit
-    if ! git diff --quiet origin/develop "$project_branch" -- "$project_dir"; then
-      new_branch="$project_name/release/$release_version"
-      new_tag="tags/$project_name/release/$release_version-rc.1"
-      git checkout -b "$new_branch" origin/develop
-      echo "$release_version" > VERSION
-      git add VERSION
-      git commit -m "[Version bump] $project_branch -> $new_branch"
-      git tag "$new_tag"
-      git push -u origin "$new_tag" "$new_branch"
-      git checkout "$current_branch"
-    fi
-    popd > /dev/null || exit
+    branch_and_commit "$project_dir"
   fi
 done
