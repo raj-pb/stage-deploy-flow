@@ -13,7 +13,7 @@ except ImportError:
 
 
 help_text = """
-Bumps release-candidate tags while the project is in the release-flow.
+Bumps release-candidate tags while the project is in the release-flow for the release branches.
 (Typical used by CircleCI while in staging lifecycle after a successful test suite)
 
 Usage:
@@ -35,8 +35,9 @@ def main(branch: str):
     tags = repo.git.tag("--merged", f"origin/{branch}")
     tags = [tag for tag in tags.split("\n") if tag.startswith(f"tags/{branch}")]
     if len(tags) == 0:
-        print(f"No tags found related to the branch {branch}. Branches should be of the form /<app>/<SemVer>")
-        exit(1)
+        print(f"No tags found corresponding to the branch {branch}."
+              f"Release branches should be of the form `<project>/release/<SemVer>`")
+        return 0
     latest_tag = max(tags, default=None, key=cmp_to_key(tag_comparison))
     print(f"latest_tag: {latest_tag}")
     new_version = semver.bump_prerelease(latest_tag.split('/')[-1])
