@@ -27,7 +27,7 @@ jobs:
             pip install semver gitpython
             git config user.email "github-murine-bot@murine.org"
             git config user.name "CircleCI System User"
-            python infra/bin/release_candidate_tags.py -b $(CIRCLE_BRANCH)
+            python infra/bin/release_candidate_tags.py -b $CIRCLE_BRANCH
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
