@@ -20,20 +20,16 @@ jobs:
       - name: Print time
         uses: ./tp.yml
 
-      # Check if the script is executable
       - run:
-          name: Check executable permission
+          name: Bump release candidates tags for release branches
           command: |
             if [ ! -x infra/bin/release_candidate_tags.py ]; then
               chmod +x infra/bin/release_candidate_tags.py
             fi
-      # Install required modules
-      - run:
-          name: Install required modules
-          command: pip install semver gitpython
-      - run:
-          name: Run Python script
-          command: python infra/bin/release_candidate_tags.py -b rabbit/release/1.2.3
+            pip install semver gitpython
+            git config user.email "github-murine-bot@murine.org"
+            git config user.name "CircleCI System User"
+            python infra/bin/release_candidate_tags.py -b $CIRCLE_BRANCH
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
