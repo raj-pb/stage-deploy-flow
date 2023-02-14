@@ -9,14 +9,29 @@ jobs:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: cimg/base:stable
+      - image: cimg/python:3.9
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
       - run:
           name: "Say hello"
-          command: "echo Hello, World!"
+          command: "echo Hello, World! && ls infra/bin"
+
+      # Check if the script is executable
+      - run:
+          name: Check executable permission
+          command: |
+            if [ ! -x infra/bin/release_candidate_tags.py ]; then
+              chmod +x infra/bin/release_candidate_tags.py
+            fi
+      # Install required modules
+      - run:
+          name: Install required modules
+          command: pip install semver gitpython
+      - run:
+          name: Run Python script
+          command: python infra/bin/release_candidate_tags.py -b rabbit/release/1.2.3
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
