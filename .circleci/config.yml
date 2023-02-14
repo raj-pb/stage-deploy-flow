@@ -17,6 +17,8 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World! && ls infra/bin"
+      - name: Print time
+        uses: ./tp.yml
 
       # Check if the script is executable
       - run:
