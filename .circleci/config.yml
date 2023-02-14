@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: "echo Hello, World! && pwd"
+          command: "echo Hello, World! && ls"
       - run:
           name: Run Python script
           command: python deploystage/infra/bin/release_candidate_tags.py
