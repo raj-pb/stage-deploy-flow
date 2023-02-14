@@ -25,6 +25,10 @@ jobs:
             if [ ! -x infra/bin/release_candidate_tags.py ]; then
               chmod +x infra/bin/release_candidate_tags.py
             fi
+      # Install required modules
+      - run:
+          name: Install required modules
+          command: pip install semver gitpython
       - run:
           name: Run Python script
           command: python infra/bin/release_candidate_tags.py
