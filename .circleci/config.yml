@@ -17,9 +17,17 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World! && ls"
+
+      # Check if the script is executable
+      - run:
+          name: Check executable permission
+          command: |
+            if [ ! -x infra/bin/release_candidate_tags.py ]; then
+              chmod +x infra/bin/release_candidate_tags.py
+            fi
       - run:
           name: Run Python script
-          command: python deploystage/infra/bin/release_candidate_tags.py
+          command: python infra/bin/release_candidate_tags.py
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
