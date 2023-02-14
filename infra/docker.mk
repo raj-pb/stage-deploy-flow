@@ -18,7 +18,7 @@ DOCKER_BUILD_PLATFORM ?= linux/amd64
 
 .PHONY: docker-login
 docker-login:
-	aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $(ECR)
+	# aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $(ECR)
 
 
 .PHONY: docker-build
@@ -26,7 +26,7 @@ docker-build:  ## Builds the docker container for this project
 	# Dump build info to text file as part of the build
 	@echo "Building Docker tags: $(DOCKER_NAME_AND_TAGS)"
 	@printf '{"commit_sha":"$(CIRCLE_SHA1)","branch":"$(CIRCLE_BRANCH)","circleci_build_num":"$(CIRCLE_BUILD_NUM)", "docker_tag":"$(DOCKER_TAG)"}\n' > BUILD_INFO.json
-	docker buildx build --platform $(DOCKER_BUILD_PLATFORM) --progress plain -f ./Dockerfile $(ROOT) $(foreach word,$(DOCKER_NAME_AND_TAGS),-t $(ECR)/$(word))
+	# docker buildx build --platform $(DOCKER_BUILD_PLATFORM) --progress plain -f ./Dockerfile $(ROOT) $(foreach word,$(DOCKER_NAME_AND_TAGS),-t $(ECR)/$(word))
 
 
 .PHONY: docker-build-and-push
