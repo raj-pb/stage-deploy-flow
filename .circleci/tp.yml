@@ -1,0 +1,11 @@
+version: 2.1
+
+jobs:
+  print-time:
+    runs-on: ubuntu-latest
+    steps:
+      - run:
+          name: Print time
+          command: |
+            echo "The current time is:"
+            date
