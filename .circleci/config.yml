@@ -16,7 +16,7 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: "echo Hello, World! && ls"
+          command: "echo Hello, World! && ls infra/bin"
 
       # Check if the script is executable
       - run:
