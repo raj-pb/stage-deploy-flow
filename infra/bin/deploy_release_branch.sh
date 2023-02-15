@@ -77,4 +77,4 @@ else
 fi
 echo "Building Release..."
 
-RELEASE_VERSION=$version make $project_name-deploy
+# RELEASE_VERSION=$version make $project_name-deploy
