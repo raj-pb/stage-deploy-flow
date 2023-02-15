@@ -62,7 +62,7 @@ then
 else
   echo "[x] Latest tag not found:"
   echo "    expected:       tags/<project>/release/x.y.z-rc.u"
-  echo "    latest tag: $new_tag"
+  echo "    latest tag:     $new_tag"
 fi
 
 if [[ "$current_branch" =~ ^([a-z_]+)/release[-\/]([[:digit:]]+.[[:digit:]]+.[[:digit:]]+[a-z]*) ]]
