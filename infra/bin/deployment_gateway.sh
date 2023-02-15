@@ -55,13 +55,15 @@ fi
 
 root_dir=$(git rev-parse --show-toplevel)
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-hook_path="$(git rev-parse --git-dir)/hooks/post-update"
+
 
 # Update the version for a particular project, commit and push to a new branch
 branch_and_commit() {
   project_dir=$1
   project_name=$(yq eval '.PROJECT_NAME' "$project_dir/manifest.yaml")
   project_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n1)
+
+  # make project dir as the working directory
   pushd "$project_dir" > /dev/null || exit
   if ! git diff --quiet origin/develop "$project_branch" -- "$project_dir"; then
     git stash
