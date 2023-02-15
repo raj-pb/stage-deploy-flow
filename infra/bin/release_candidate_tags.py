@@ -35,9 +35,9 @@ def main(branch: str):
     tags = repo.git.tag("--merged", f"origin/{branch}")
     tags = [tag for tag in tags.split("\n") if tag.startswith(f"tags/{branch}")]
     if len(tags) == 0:
-        print(f"No tags found corresponding to the branch {branch}."
+        print(f"No tags found corresponding to the branch {branch}.\n"
               f"Release branches should be of the form `<project>/release/<SemVer>`")
-        return 0
+        return "branch"
     latest_tag = max(tags, default=None, key=cmp_to_key(tag_comparison))
     print(f"latest_tag: {latest_tag}")
     new_version = semver.bump_prerelease(latest_tag.split('/')[-1])
