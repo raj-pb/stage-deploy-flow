@@ -42,7 +42,9 @@ fi
 # Verify branch follows naming convention
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
-python3 ./release_candidate_tags.py -b "$current_branch"
+file_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+python3 "$file_directory"/release_candidate_tags.py -b "$current_branch"
 if [[ "$current_branch" =~ ^([a-z_]+)/release[-\/]([[:digit:]]+.[[:digit:]]+.[[:digit:]]+[a-z]*) ]]
 then
   build_tag=$(echo "$current_branch" | cut -d'/' -f2)
