@@ -19,6 +19,7 @@ jobs:
           name: Bump release candidates tags for release branches
           command: |
             pip install semver gitpython
+            ./infra/bin/deploy_release_branch.sh
             python infra/bin/release_candidate_tags.py -b $CIRCLE_BRANCH
 
 # Invoke jobs via workflows
