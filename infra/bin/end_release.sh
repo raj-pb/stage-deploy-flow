@@ -35,7 +35,8 @@ release_notes() {
   local prev_branch
   prev_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n2 | head -n1)
   local notes
-  notes=python3 "$file_dir"/release_notes.py -e "$current_branch" -s "$prev_branch" -d "$project_dir"
+  # errors would give empty notes
+  notes=python3 "$file_dir"/release_notes.py -e "$current_branch" -s "$prev_branch" -d "$project_dir" 2>/dev/null
   echo "$notes"
 }
 
@@ -66,11 +67,13 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
       # Continue with the merge if clean and commit the changes
       git commit -m "[release] $project_name:$project_version merge to develop"
       new_tag="tags/$project_name/release/$project_version"
+      echo "Creating a new tag $new_tag..."
       git tag "$new_tag"
-      git push -u origin develop "$new_tag"
+      git push -u origin develop "$new_tag" -q
 
       # Create the release & notes using gh
-      notes=$(release_notes "$project_dir" "$project_name" "project_branch")
+      echo "Generating release_notes..."
+      notes=$(release_notes "$project_dir" "$project_name" "$project_branch")
       gh release create "$new_tag" --title "Release version $project_version" --notes "$notes"
       echo "$project_name: $project_version merged to develop."
     else

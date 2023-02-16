@@ -70,6 +70,7 @@ branch_and_commit() {
 
     # create a new branch for the version being released
     new_branch="$project_name/release/$release_version"
+    echo "Creating a new branch $new_branch..."
     git checkout -b "$new_branch" origin/develop
     echo "$release_version" > VERSION
     git add VERSION
@@ -77,9 +78,10 @@ branch_and_commit() {
 
     # create a new release candidate tag
     new_tag="tags/$project_name/release/$release_version-rc.1"
+    echo "Creating a new tag $new_tag..."
     git tag "$new_tag"
     git push -u origin "$new_tag" "$new_branch"
-    git checkout "$current_branch"
+    git checkout "$current_branch" -q
     git stash pop -q
   fi
   popd > /dev/null || exit
