@@ -41,6 +41,7 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
 
     # Merge the branch into develop
     if [[ -z "$DRY_RUN" ]]; then
+      echo "$project_name: $project_branch being merged..."
       git checkout develop -q && git pull -q
       if ! git merge --no-ff --no-commit "$project_branch"; then
         echo "Release aborted. Merge conflicts and retry:"
@@ -50,7 +51,6 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
         exit 1
       fi
       git commit -m "[release] $project_name:$project_version merge to develop"
-      exit 1
       new_tag="tags/$project_name/release/$project_version"
       git tag "$new_tag"
       git push -u develop "$new_tag"
@@ -58,7 +58,7 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
       gh release create "$new_tag" --title "Release version $project_version" --notes "These are the release notes for version $VERSION"
       echo "$project_name: $project_version merged to develop."
     else
-      echo "Dry run: found $project_branch to be merged."
+      echo "$project_name (dry run): found $project_branch to be merged."
     fi
   fi
 done
