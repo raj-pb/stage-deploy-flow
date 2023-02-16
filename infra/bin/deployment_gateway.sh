@@ -1,10 +1,24 @@
 #!/bin/bash
 
 show_help() {
-  echo "Usage: $0 [-v|--release-version <version>]"
-  echo "  -v, --release-version <version>   version being released in semver format"
-  echo "  -r, --rollback <version>          rollback the version [WARNING: cannot be undone]"
-  echo "  -h, --help                        show this help message and exit"
+cat << EOF
+Usage: $0 [-v|--release-version <version>]
+
+Starts the deployment flow by taking-in the new "version" in SemVer format to be released.
+Selects the candidate projects that have updated code in the "develop" branch from the previous release/staging branch
+ and sets up new git revisions, artifacts etc.
+
+All the staging branches will be of form <project>/release/x.y.z.
+Creates new branch & tag with the new version, e.g.,
+ * [new tag]         tags/api/release/1.3.1-rc.1 -> tags/api/release/1.3.1-rc.1
+ * [new branch]      api/release/1.3.1 -> api/release/1.3.1
+All the prerelease commits, or release candidates, will be tagged for the duration of the stage deployment process.
+
+Options:
+  -v, --release-version <version>   version being released in semver format
+  -r, --rollback <version>          rollback the version [WARNING: cannot be undone]
+  -h, --help                        show this help message and exit
+EOF
 }
 
 while [ $# -gt 0 ]; do

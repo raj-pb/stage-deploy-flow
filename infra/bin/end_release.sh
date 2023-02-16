@@ -1,9 +1,32 @@
 #!/bin/bash
 
 function show_help {
-  echo "Usage: $0 [-h] [--dry-run]"
-  echo "  -h, --help          show this help message and exit"
-  echo "  --dry-run           perform a dry run, don't merge any branches"
+cat << EOF
+Usage: $0 [-h] [--dry-run]
+
+Handles the end of the staging deployment cycle, merges the latest commits in staging branch to the "develop" branch.
+Updates the VERSION file, for all the changed projects in this release, to the released version.
+
+All the staging branches will be of form <project>/release/x.y.z. The project would have a pending release
+if the VERSION in develop branch is less than that of the latest staging branch, e.g.
+  [git:develop] >> cat experiment_api/VERSION
+                >> 4.1.0
+  then, api/release/4.2.0 would be the staging branch that is pending release.
+
+For all the projects with a pending release, the following would be done:
+  - Merge all the staging branches to "develop"
+  - Create a tag from the release candidates for the staging branch, e.g.:
+       >> git tag -n1  gives-> tags/api/release/4.2.0-rc.15
+       * [new tag]         tags/api/release/4.2.0
+  - Mark the latest release tag for release & generate release notes
+All the pending releases in stage are thus merged. This marks the end of the stage deployment flow.
+
+<Scheduled ~2 weeks after the stage deployment starts>
+
+Options:
+  -h, --help          show this help message and exit
+  --dry-run           perform a dry run, don't merge any branches
+EOF
 }
 
 # Parse command-line arguments
