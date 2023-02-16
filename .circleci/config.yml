@@ -30,7 +30,7 @@ jobs:
     steps:
       - run:
           name: Provide template in bash env
-          command: echo 'export MY_ORB_TEMPLATE=$(cat infra/bin/slack-templates/send_slack.json)' >> $BASH_ENV
+          command: echo 'export MY_ORB_TEMPLATE=$(cat infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - slack/notify:
           event: fail
           template: MY_ORB_TEMPLATE
