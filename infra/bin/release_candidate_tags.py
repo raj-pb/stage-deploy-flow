@@ -35,15 +35,15 @@ def main(branch: str):
     tags = repo.git.tag("--merged", f"origin/{branch}")
     tags = [tag for tag in tags.split("\n") if tag.startswith(f"tags/{branch}")]
     if len(tags) == 0:
-        print(f"No tags found corresponding to the branch {branch}."
+        print(f"No tags found corresponding to the branch {branch}.\n"
               f"Release branches should be of the form `<project>/release/<SemVer>`")
-        return 0
+        return "branch"
     latest_tag = max(tags, default=None, key=cmp_to_key(tag_comparison))
     print(f"latest_tag: {latest_tag}")
     new_version = semver.bump_prerelease(latest_tag.split('/')[-1])
     new_tag = "/".join(latest_tag.split('/')[:-1]+[new_version])
-    repo.config_reader().set_value("user", "name", "CircleCI System User")
-    repo.config_reader().set_value("user", "email", "github-murine-bot@murine.org")
+    repo.config_writer().set_value("user", "name", "CircleCI System User").release()
+    repo.config_writer().set_value("user", "email", "github-murine-bot@murine.org").release()
     repo.create_tag(new_tag, message=f"Release candidate {new_tag}")
     repo.remote().push(refspec=f"refs/tags/{new_tag}")
     print(f"Created new tag: {new_tag}")
