@@ -38,4 +38,4 @@ workflows:
   say-hello-workflow:
     jobs:
       - say-hello:
-        context: slack-secrets
+          context: slack-secrets
