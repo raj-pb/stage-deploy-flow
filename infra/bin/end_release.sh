@@ -25,6 +25,19 @@ for arg in "$@"; do
 done
 
 root_dir=$(git rev-parse --show-toplevel)
+file_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+release_notes() {
+  local project_dir=$1
+  local project_name=$2
+  local current_branch=$3
+  # the previous release; which will be the same as current branch for the very first branch
+  local prev_branch
+  prev_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n2 | head -n1)
+  local notes
+  notes=python3 "$file_dir"/release_notes.py -e "$current_branch" -s "$prev_branch" -d "$project_dir"
+  echo "$notes"
+}
 
 find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
   if [ -f "$project_dir/manifest.yaml" ]; then
@@ -45,17 +58,20 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
       git checkout develop -q && git pull -q
       if ! git merge --no-ff --no-commit "$project_branch"; then
         echo "Release aborted. Merge conflicts and retry:"
-        # Continue with the merge and commit the changes
         git status
         git merge --abort
         exit 1
       fi
+
+      # Continue with the merge if clean and commit the changes
       git commit -m "[release] $project_name:$project_version merge to develop"
       new_tag="tags/$project_name/release/$project_version"
       git tag "$new_tag"
       git push -u origin develop "$new_tag"
-      # Create the release notes using gh
-      gh release create "$new_tag" --title "Release version $project_version" --notes "These are the release notes for version $VERSION"
+
+      # Create the release & notes using gh
+      notes=$(release_notes "$project_dir" "$project_name" "project_branch")
+      gh release create "$new_tag" --title "Release version $project_version" --notes "$notes"
       echo "$project_name: $project_version merged to develop."
     else
       echo "$project_name (dry run): found $project_branch to be merged."

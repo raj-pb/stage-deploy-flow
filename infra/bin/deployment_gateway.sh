@@ -59,7 +59,7 @@ current_branch=$(git rev-parse --abbrev-ref HEAD)
 
 # Update the version for a particular project, commit and push to a new branch
 branch_and_commit() {
-  project_dir=$1
+  local project_dir=$1
   project_name=$(yq eval '.PROJECT_NAME' "$project_dir/manifest.yaml")
   project_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n1)
 
@@ -67,16 +67,20 @@ branch_and_commit() {
   pushd "$project_dir" > /dev/null || exit
   if ! git diff --quiet origin/develop "$project_branch" -- "$project_dir"; then
     git stash
+
+    # create a new branch for the version being released
     new_branch="$project_name/release/$release_version"
-    new_tag="tags/$project_name/release/$release_version-rc.1"
     git checkout -b "$new_branch" origin/develop
     echo "$release_version" > VERSION
     git add VERSION
     git commit -m "[Version bump] $project_branch -> $new_branch"
+
+    # create a new release candidate tag
+    new_tag="tags/$project_name/release/$release_version-rc.1"
     git tag "$new_tag"
     git push -u origin "$new_tag" "$new_branch"
     git checkout "$current_branch"
-    git stash pop
+    git stash pop -q
   fi
   popd > /dev/null || exit
 }
