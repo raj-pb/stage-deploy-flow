@@ -53,7 +53,7 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
       git commit -m "[release] $project_name:$project_version merge to develop"
       new_tag="tags/$project_name/release/$project_version"
       git tag "$new_tag"
-      git push -u develop "$new_tag"
+      git push -u origin develop "$new_tag"
       # Create the release notes using gh
       gh release create "$new_tag" --title "Release version $project_version" --notes "These are the release notes for version $VERSION"
       echo "$project_name: $project_version merged to develop."
