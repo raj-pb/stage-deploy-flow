@@ -22,12 +22,6 @@ jobs:
           command: |
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
-
-
-  notify:
-    docker:
-      - image: 'cimg/base:stable'
-    steps:
       - run:
           name: Provide template in bash env
           command: ls infra/slack-templates && echo 'export MY_ORB_TEMPLATE=$(cat infra/slack-templates/send_slack.json)' >> $BASH_ENV
@@ -43,6 +37,5 @@ jobs:
 workflows:
   say-hello-workflow:
     jobs:
-      - say-hello
-      - notify:
-          context: slack-secrets
+      - say-hello:
+        context: slack-secrets
