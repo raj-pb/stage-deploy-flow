@@ -54,13 +54,8 @@ jobs:
           name: Bump release candidates tags for release branches
           command: |
             echo << pipeline.parameters.action >>
-
-            git config --global user.email "test@murine.org"
-            git config --global user.name "Test Users"
-            git clone git@github.com:murine-org/murine.git
-            cd murine
-            git checkout -b ttest
-            git push origin ttest
+            pip install -q semver gitpython
+            ./infra/bin/deploy_release_branch.sh
       - slack/notify:
           event: fail
           template: MY_ORB_TEMPLATE
