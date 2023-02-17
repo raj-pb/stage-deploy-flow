@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Bump release candidates tags for release branches
           command: |
-            echo << pipeline.parameters.ayyo >>
+            echo << pipeline.parameters.action >>
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
       - slack/notify:
