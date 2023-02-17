@@ -5,7 +5,7 @@ version: 2.1
 parameters:
   action:
     type: string
-    default: false
+    default: "false"
     
 orbs:
   slack: circleci/slack@4.9.3
