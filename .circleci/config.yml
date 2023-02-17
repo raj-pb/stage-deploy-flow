@@ -87,4 +87,4 @@ workflows:
     jobs:
       - say-bye:
           context:
-            -slack-secrets
+            - slack-secrets
