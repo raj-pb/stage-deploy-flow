@@ -6,6 +6,9 @@ parameters:
   action:
     type: string
     default: "false"
+  release:
+    type: boolean
+    default: false
     
 orbs:
   slack: circleci/slack@4.9.3
@@ -72,7 +75,7 @@ jobs:
 workflows:
   say-hello-workflow:
     when:
-      equal: [ false, << pipeline.parameters.action >> ]
+      equal: [ false, << pipeline.parameters.release >> ]
     jobs:
       - say-hello:
           context: 
@@ -80,7 +83,7 @@ workflows:
 
   pappa-workflow:
     when:
-      equal: [ start_release, << pipeline.parameters.action >> ]
+      equal: [ true, << pipeline.parameters.release >> ]
     jobs:
       - say-bye:
           context:
