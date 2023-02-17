@@ -85,6 +85,6 @@ workflows:
     when:
       equal: [ true, << pipeline.parameters.release >> ]
     jobs:
-      - say-bye:
+      - say-hello:
           context:
             - slack-secrets
