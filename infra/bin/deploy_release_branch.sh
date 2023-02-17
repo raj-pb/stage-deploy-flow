@@ -39,6 +39,8 @@ else
   echo "[✓] git branch is clean"
 fi
 
+export ENV="newenv"
+
 # Verify branch follows naming convention
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
