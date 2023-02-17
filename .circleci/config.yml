@@ -51,9 +51,6 @@ jobs:
             # github-murine-bot
             - "04:28:22:bd:ef:ff:70:82:02:e5:0f:d1:2c:6f:60:f7"
       - run:
-          name: "Say Bye"
-          command: "echo Bye, World! && ls infra/bin"
-      - run:
           name: Provide template in bash env
           command: ls infra/slack-templates && echo 'export MY_ORB_TEMPLATE=$(cat infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - run:
