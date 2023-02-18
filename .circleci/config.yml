@@ -54,6 +54,7 @@ jobs:
           name: Bump release candidates tags for release branches
           command: |
             echo << pipeline.parameters.action >>
+            echo 'export ENV=yys' >> $BASH_ENV
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
       - slack/notify:
