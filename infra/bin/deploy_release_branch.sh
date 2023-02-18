@@ -40,6 +40,7 @@ else
 fi
 
 export ENV="newenv"
+printenv
 
 # Verify branch follows naming convention
 current_branch=$(git rev-parse --abbrev-ref HEAD)
