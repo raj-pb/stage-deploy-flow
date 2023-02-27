@@ -2,7 +2,7 @@
 
 show_help() {
 cat << EOF
-Usage: $0 [-v|--release-version <version>]
+Usage: $0 [-v|--release-version <version>] [-d|--dry-run]
 
 Starts the deployment flow by taking-in the new "version" in SemVer format to be released.
 Selects the candidate projects that have updated code in the "develop" branch from the previous release/staging branch
@@ -17,6 +17,7 @@ All the prerelease commits, or release candidates, will be tagged for the durati
 Options:
   -v, --release-version <version>   version being released in semver format
   -r, --rollback <version>          rollback the version [WARNING: cannot be undone]
+  -d, --dry-run                     makes a dry run
   -h, --help                        show this help message and exit
 EOF
 }
@@ -26,6 +27,10 @@ while [ $# -gt 0 ]; do
     -v|--release-version)
       release_version="$2"
       shift 2
+      ;;
+    -d|--dry-run)
+      DRY_RUN=1
+      shift
       ;;
     -r|--rollback)
       branches="$(git branch | sed 's/^..//' | grep "/release/$2")";
@@ -84,19 +89,27 @@ branch_and_commit() {
 
     # create a new branch for the version being released
     new_branch="$project_name/release/$release_version"
-    echo "Creating a new branch $new_branch..."
-    git checkout -b "$new_branch" origin/develop
-    echo "$release_version" > VERSION
-    git add VERSION
-    git commit -m "[Version bump] $project_branch -> $new_branch"
+    if [[ -z "$DRY_RUN" ]]; then
+      echo "Creating a new branch $new_branch..."
+      git checkout -b "$new_branch" origin/develop
+      echo "$release_version" > VERSION
+      git add VERSION
+      git commit -m "[Version bump] $project_branch -> $new_branch"
+    else
+      echo "[Dry run] New branch $new_branch would be created."
+    fi
 
     # create a new release candidate tag
     new_tag="tags/$project_name/release/$release_version-rc.1"
-    echo "Creating a new tag $new_tag..."
-    git tag "$new_tag"
-    git push -u origin "$new_tag" "$new_branch"
-    git checkout "$current_branch" -q
-    git stash pop -q
+    if [[ -z "$DRY_RUN" ]]; then
+      echo "Creating a new tag $new_tag..."
+      git tag "$new_tag"
+      git push -u origin "$new_tag" "$new_branch"
+      git checkout "$current_branch" -q
+      git stash pop -q
+    else
+      echo "[Dry run] New tag $new_tag would be created."
+    fi
   fi
   popd > /dev/null || exit
 }
