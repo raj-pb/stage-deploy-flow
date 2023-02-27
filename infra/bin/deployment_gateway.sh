@@ -106,10 +106,10 @@ branch_and_commit() {
       git tag "$new_tag"
       git push -u origin "$new_tag" "$new_branch"
       git checkout "$current_branch" -q
-      git stash pop -q
     else
       echo "[Dry run] New tag $new_tag would be created."
     fi
+    git stash pop -q
   fi
   popd > /dev/null || exit
 }
