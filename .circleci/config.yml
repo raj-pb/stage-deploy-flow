@@ -52,10 +52,15 @@ jobs:
             # github-murine-bot
             - "04:28:22:bd:ef:ff:70:82:02:e5:0f:d1:2c:6f:60:f7"
       - run:
+          name: Provide template in bash env
+          command: ls infra/slack-templates && echo 'export MY_ORB_TEMPLATE=$(cat infra/slack-templates/send_slack.json)' >> $BASH_ENV
+      - run:
           name: Bump release candidates tags for release branches
           command: |
             echo << pipeline.parameters.action >>
-            echo 'export ENV=yys' >> $BASH_ENV
+            git config --global user.email "test@murine.org"
+            git config --global user.name "Test Users"
+            git clone git@github.com:murine-org/murine.git
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
       - slack/notify:
