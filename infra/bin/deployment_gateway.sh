@@ -65,7 +65,7 @@ if ! [[ "$release_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 # Validate the release version is the latest possible
-latest_version=$(git branch -r | grep "/release/" | sort -V | tail -n 1 | awk -F "/" '{print $NF}')
+latest_version=$(git branch -r | grep "/release/" | awk -F "/" '{print $NF}' | sort -V | tail -n 1)
 if [ "$release_version" = "$(echo -e "$latest_version\n$release_version" | sort -V | head -n1)" ]; then
   echo "Error: Release version $release_version cannot be lesser than the last version $latest_version"
   exit 1
