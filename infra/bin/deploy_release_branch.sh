@@ -106,5 +106,6 @@ fi
 echo "Building Release..."
 
 export RELEASE_VERSION=$new_tag
+echo "export RELEASE_VERSION=$new_tag" >> $BASH_ENV
 echo "Releases, $RELEASE_VERSION"
 #make $project_name-deploy
