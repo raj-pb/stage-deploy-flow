@@ -66,6 +66,9 @@ jobs:
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
             echo "Releases, $RELEASE_VERSION"
+      - run:
+          name: Print env
+          command: echo "RRR, $RELEASE_VERSION"
       - slack/notify:
           event: fail
           template: MY_ORB_TEMPLATE
