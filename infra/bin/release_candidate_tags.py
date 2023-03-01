@@ -2,8 +2,9 @@
 
 import argparse
 import semver
+from semver import VersionInfo as VerInfo
 from functools import cmp_to_key
-from git import Repo, Commit
+from git import Repo
 
 
 help_text = """
@@ -25,17 +26,19 @@ Usage:
 def main(branch: str):
     repo = Repo(".", search_parent_directories=True)
     print(f"branch: {branch}")
-    tags = repo.git.ls_remote("--tags", f"origin")
-    tag_names = [tag.split("refs/tags/")[1] for tag in tags.split("\n")]
-    tag_names = [tag for tag in tag_names
-                 if tag.startswith(f"tags/{branch}")
-                 and semver.VersionInfo.isvalid(tag.split('/')[-1])]
-    print (tag_names)
-    if len(tag_names) == 0:
-        print(f"No tags found corresponding to the branch {branch}.\n"
+    tags = [tag.split("refs/tags/")[1] for tag in repo.git.ls_remote("--tags", f"origin").split("\n")]
+    candidate_tags = []
+    for t in tags:
+        if t.startswith(f"tags/{branch}"):
+            rc_part = t.split('/')[-1]
+            if VerInfo.isvalid(rc_part) and VerInfo.parse(rc_part).prerelease:
+                candidate_tags.append(t)
+
+    if len(candidate_tags) == 0:
+        print(f"No candidate tags found corresponding to the branch {branch}.\n"
               f"Release branches should be of the form `<project>/release/<semver>`")
         return 0
-    latest_tag = max(tag_names, default=None, key=cmp_to_key(tag_comparison))
+    latest_tag = max(candidate_tags, default=None, key=cmp_to_key(tag_comparison))
     print(f"latest_tag: {latest_tag}")
     new_version = semver.bump_prerelease(latest_tag.split('/')[-1])
     new_tag = "/".join(latest_tag.split('/')[:-1]+[new_version])
