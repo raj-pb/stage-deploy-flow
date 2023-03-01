@@ -48,9 +48,11 @@ current_branch=$(git rev-parse --abbrev-ref HEAD)
 
 file_directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 python3 "$file_directory"/release_candidate_tags.py -b "$current_branch"
+
+echo "$RELEASE_VERSION"
 new_tag=$(git describe --abbrev=0 --tags | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
-if [[ "$new_tag" =~ ^tags\/([a-z_]+)\/release[-\/]([[:digit:]]+.[[:digit:]]+.[[:digit:]]+-[a-z_]*.[[:digit:]]+)? ]]
+if [[ "$RELEASE_VERSION" =~ ^tags\/([a-z_]+)\/release[-\/]([[:digit:]]+.[[:digit:]]+.[[:digit:]]+-[a-z_]*.[[:digit:]]+)? ]]
 then
   build_tag=$(echo "$current_branch" | cut -d'/' -f2)
   tag_project=${BASH_REMATCH[1]}
