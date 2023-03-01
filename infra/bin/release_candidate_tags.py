@@ -32,7 +32,7 @@ def main(branch: str):
     for t in tags:
         if t.startswith(f"tags/{branch}"):
             rc_part = t.split('/')[-1]
-            if VerInfo.isvalid(rc_part) and VerInfo.parse(rc_part).prerelease:
+            if VerInfo.isvalid(rc_part):
                 candidate_tags.append(t)
 
     if len(candidate_tags) == 0:
@@ -41,6 +41,9 @@ def main(branch: str):
         return 0
     latest_tag = max(candidate_tags, default=None, key=cmp_to_key(tag_comparison))
     print(f"latest_tag: {latest_tag}")
+    if VerInfo.parse(latest_tag.split('/')[-1]).prerelease is None:
+        print("Latest tag is already a release tag. No further pre-releases can be done.")
+        return 0
     new_version = semver.bump_prerelease(latest_tag.split('/')[-1])
     new_tag = "/".join(latest_tag.split('/')[:-1]+[new_version])
     repo.config_writer().set_value("user", "name", "CircleCI System User").release()

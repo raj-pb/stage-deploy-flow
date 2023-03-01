@@ -65,6 +65,7 @@ jobs:
             git clone git@github.com:murine-org/murine.git
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
+            echo "Releases, $RELEASE_VERSION"
       - slack/notify:
           event: fail
           template: MY_ORB_TEMPLATE
