@@ -27,7 +27,9 @@ def main(branch: str):
     print(f"branch: {branch}")
     tags = repo.git.ls_remote("--tags", f"origin")
     tag_names = [tag.split("refs/tags/")[1] for tag in tags.split("\n")]
-    tag_names = [tag for tag in tag_names if tag.startswith(f"tags/{branch}" and semver.VersionInfo.isvalid(tag.split('/')[-1]))]
+    tag_names = [tag for tag in tag_names
+                 if tag.startswith(f"tags/{branch}")
+                 and semver.VersionInfo.isvalid(tag.split('/')[-1])]
     print (tag_names)
     if len(tag_names) == 0:
         print(f"No tags found corresponding to the branch {branch}.\n"
