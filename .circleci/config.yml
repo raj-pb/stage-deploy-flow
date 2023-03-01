@@ -35,10 +35,14 @@ jobs:
             cd rabbit_project
             pip install -q semver gitpython
             ../infra/bin/deploy_release_branch.sh
-            echo "Releases, $RELEASE_VERSION"
       - run:
           name: Print env
-          command: echo "RRR, $RELEASE_VERSION"
+          command: |
+            if [[ -n "$RELEASE_VERSION" ]]
+              echo "RRR, $RELEASE_VERSION"
+            else
+              echo "RRRRT"
+            fi
       - run:
           name: Provide template in bash env
           command: echo 'export SLACK_FAIL=$(cat ../infra/slack-templates/send_slack.json)' >> $BASH_ENV
