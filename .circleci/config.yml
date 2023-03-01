@@ -38,7 +38,7 @@ jobs:
       - run:
           name: Print env
           command: |
-            if [[ -n "$RELEASE_VERSION" ]]
+            if [[ -n "$RELEASE_VERSION" ]]; then
               echo "RRR, $RELEASE_VERSION"
             else
               echo "RRRRT"
