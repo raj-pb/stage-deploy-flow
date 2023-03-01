@@ -42,7 +42,7 @@ fi
 export ENV="newenv"
 printenv
 echo  "printing bash env..."
-cat "$BASH_ENV"
+
 # Verify branch follows naming convention
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
