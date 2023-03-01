@@ -26,14 +26,14 @@ jobs:
           name: "Say hello"
           command: "echo Hello, World! && ls infra/bin"
       - run:
-          name: Provide template in bash env
-          command: echo 'export SLACK_FAIL=$(cat infra/slack-templates/send_slack.json)' >> $BASH_ENV
-      - run:
           name: Bump release candidates tags for release branches
           command: |
             cd rabbit_project
             pip install -q semver gitpython
             ../infra/bin/deploy_release_branch.sh
+      - run:
+          name: Provide template in bash env
+          command: echo 'export SLACK_FAIL=$(cat ../infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - slack/notify:
           event: fail
           template: SLACK_FAIL
