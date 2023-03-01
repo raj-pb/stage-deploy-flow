@@ -21,6 +21,10 @@ jobs:
     docker:
       - image: cimg/python:3.9
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            # github-murine-bot
+            - "e7:3b:ea:81:02:7c:68:4f:f5:5b:d8:ba:47:62:c2:2e"
       - checkout
       - run:
           name: "Say hello"
