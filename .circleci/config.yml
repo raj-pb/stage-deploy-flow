@@ -9,6 +9,9 @@ parameters:
   release:
     type: boolean
     default: false
+  start_dry_run:
+    type: boolean
+    default: false
     
 orbs:
   slack: circleci/slack@4.9.3
@@ -29,6 +32,16 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World! && ls infra/bin"
+      - run:
+          name: Print env
+          environment:
+            DRY_RUN: <<pipeline.parameters.start_dry_run>>
+          command: |
+            if [[ -n "$DRY_RUN" ]]; then
+              echo "drt ru bn, $DRY_RUN"
+            else
+              echo "RRRRT"
+            fi
       - run:
           name: Bump release candidates tags for release branches
           command: |
