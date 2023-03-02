@@ -37,7 +37,7 @@ jobs:
           environment:
             DRY_RUN: <<pipeline.parameters.start_dry_run>>
           command: |
-            if [[ -n "$DRY_RUN" ]]; then
+            if [[ "$DRY_RUN" = 1 ]]; then
               echo "drt ru bn, $DRY_RUN"
             else
               echo "RRRRT"
