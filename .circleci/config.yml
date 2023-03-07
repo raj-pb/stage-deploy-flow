@@ -9,6 +9,9 @@ parameters:
   release:
     type: boolean
     default: false
+  start_dry_run:
+    type: boolean
+    default: false
     
 orbs:
   slack: circleci/slack@4.9.3
@@ -30,11 +33,29 @@ jobs:
           name: "Say hello"
           command: "echo Hello, World! && ls infra/bin"
       - run:
+          name: Print env
+          environment:
+            DRY_RUN: <<pipeline.parameters.start_dry_run>>
+          command: |
+            if [[ "$DRY_RUN" = 1 ]]; then
+              echo "drt ru bn, $DRY_RUN"
+            else
+              echo "RRRRT"
+            fi
+      - run:
           name: Bump release candidates tags for release branches
           command: |
             cd rabbit_project
             pip install -q semver gitpython
             ../infra/bin/deploy_release_branch.sh
+      - run:
+          name: Print env
+          command: |
+            if [[ -n "$RELEASE_VERSION" ]]; then
+              echo "RRR, $RELEASE_VERSION"
+            else
+              echo "RRRRT"
+            fi
       - run:
           name: Provide template in bash env
           command: echo 'export SLACK_FAIL=$(cat ../infra/slack-templates/send_slack.json)' >> $BASH_ENV
@@ -65,10 +86,6 @@ jobs:
             git clone git@github.com:murine-org/murine.git
             pip install -q semver gitpython
             ./infra/bin/deploy_release_branch.sh
-            echo "Releases, $RELEASE_VERSION"
-      - run:
-          name: Print env
-          command: echo "RRR, $RELEASE_VERSION"
       - slack/notify:
           event: fail
           template: MY_ORB_TEMPLATE

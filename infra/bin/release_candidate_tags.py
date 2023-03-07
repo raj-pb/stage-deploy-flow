@@ -50,7 +50,6 @@ def main(branch: str):
     repo.config_writer().set_value("user", "email", "github-murine-bot@murine.org").release()
     repo.create_tag(new_tag, message=f"Release candidate {new_tag}")
     repo.remote().push(refspec=f"refs/tags/{new_tag}")
-    os.environ["RELEASE_VERSION"] = new_tag
     print(f"Created new tag: {new_tag}")
 
 
