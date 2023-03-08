@@ -56,7 +56,7 @@ jobs:
             pushd rabbit_project
             pip install -q semver gitpython
             cd ../infra
-            ../infra/bin/deploy_release_branch.sh
+            ls ../infra/bin/deploy_release_branch.sh
             popd
       - slack/notify:
           event: fail
