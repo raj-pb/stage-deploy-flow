@@ -46,7 +46,7 @@ jobs:
           name: Provide template in bash env
           command: |
             cpwd = $(pwd)
-            echo 'export CIRCLE_PWD=$cpwd' >> $BASH_ENV
+            echo 'export CIRCLE_PWD="$cpwd"' >> $BASH_ENV
             echo 'export SLACK_FAIL=$(cat "$CIRCLE_PWD"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - run:
           name: Bump release candidates tags for release branches
