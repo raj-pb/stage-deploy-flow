@@ -45,9 +45,12 @@ jobs:
       - run:
           name: Bump release candidates tags for release branches
           command: |
-            cd rabbit_project
+            pushd rabbit_project
+            pwd
             pip install -q semver gitpython
             ../infra/bin/deploy_release_branch.sh
+            popd
+            pwd
       - run:
           name: Provide template in bash env
           command: echo 'export SLACK_FAIL=$(cat ../infra/slack-templates/send_slack.json)' >> $BASH_ENV
