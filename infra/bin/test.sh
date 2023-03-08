@@ -33,6 +33,4 @@ for project_name in "${projects[@]}"; do
 done
 
 papaya="ada"
-echo "export SLACK_PLACEHOLDER=\"\
-The following projects are built and packed : $(echo $papaya), and are ready to be released. \
-Review and merge the created PR to finish the staging flow.\"" >> $BASH_ENV
+echo "export SLACK_PLACEHOLDER=\"The following projects are built and packed : $(echo $papaya), and are ready to be released. Review and merge the created PR to finish the staging flow.\"" >> $BASH_ENV
