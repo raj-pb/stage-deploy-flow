@@ -51,8 +51,6 @@ jobs:
       - run:
           name: Bump release candidates tags for release branches
           command: |
-            echo $CIRCLE_WORKING_DIRECTORY
-            ls $CIRCLE_WORKING_DIRECTORY
             pushd rabbit_project
             pip install -q semver gitpython
             cd ../infra
