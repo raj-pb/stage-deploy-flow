@@ -25,7 +25,7 @@
 				},
 				{
 					"type": "mrkdwn",
-					"text": "*Env*: $ENV"
+					"text": "*Env*: $ENV and $SLACK_PLACEHOLDER"
 				}
 			],
 			"accessory": {

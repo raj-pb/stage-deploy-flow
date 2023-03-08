@@ -31,3 +31,5 @@ for project_name in "${projects[@]}"; do
   fi
   echo "going ahead for $project_name"
 done
+
+export SLACK_PLACEHOLDER="aau"

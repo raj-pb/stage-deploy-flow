@@ -33,11 +33,11 @@ EOF
 
 
 # Parse command-line arguments
-for arg in "$@"; do
-  case $arg in
+while [[ $# -gt 0 ]]; do
+  case $1 in
     -p|--project)
       target_project="$2"
-      shift
+      shift 2
       ;;
     -h|--help)
       show_help
@@ -47,8 +47,7 @@ for arg in "$@"; do
       DRY_RUN=1
       ;;
     *)
-      echo "Unknown argument: $arg"
-      show_help
+      echo "Unknown argument: $1"
       exit 1
       ;;
   esac
