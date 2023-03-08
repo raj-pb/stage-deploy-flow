@@ -144,7 +144,7 @@ done
 
 git push -u origin "$prerelease_branch"
 # create a new PR
-gh pr create --title "New Release : $any_version" --base develop --head "$prerelease_branch"
+gh pr create --title "New Release : $any_version" --body "" --base develop --head "$prerelease_branch"
 echo "All $release_count release branches merged to auxiliary branch "$prerelease_branch"."
 echo "Merge \`"$prerelease_branch"\` to \`develop\` to finish the stage flow."
 sleep 10   # avoid git timeout-by-rate-limiting
