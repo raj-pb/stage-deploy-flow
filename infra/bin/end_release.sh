@@ -70,8 +70,8 @@ release_notes() {
   echo "$notes"
 }
 
-declare -A release_branches=()
-declare -A project_dirs=()
+declare -a release_branches
+declare -a project_dirs
 
 find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
   if [ -f "$project_dir/manifest.yaml" ]; then
@@ -92,8 +92,8 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
 
     # Mark the branch for release
     if [[ -z "$DRY_RUN" ]]; then
-      release_branches["$project_name"]="$project_branch"
-      project_dirs["$project_name"]="$project_dir"
+      release_branches+="$project_branch"
+      project_dirs+="$project_dir"
     else
       echo "$project_name (dry run): found $project_branch to be merged."
     fi
@@ -102,7 +102,7 @@ done
 
 
 release_count=${#release_branches[@]}
-if [ $release_count -eq 0 ]; do
+if [ $release_count -eq 0 ]; then
   echo "No release"
   exit 0
 fi
@@ -112,7 +112,7 @@ echo "Found $release_count number of releases."
 
 prerelease_branch="prerelease"
 # check if the prerelease branch exists
-any_branch=$(echo "${release_branches[@]}" | awk "{print $1}")
+any_branch=${release_branches[0]}
 any_version=$(echo "$any_branch" | awk -F "/" '{print $NF}')
 if git rev-parse --verify "$prerelease_branch" > /dev/null 2>&1; then
   # if exists, rebase onto any_branch
@@ -124,8 +124,9 @@ else
 fi
 
 # ensure no merge conflicts between all the branches
-for project_name in "${!release_branches[@]}"; do
-  project_branch="${release_branches[$project_name]}"
+for ((i=0; i<release_count; i++)); do
+  project_branch="${release_branches[$i]}"
+  project_name=$(yq eval '.PROJECT_NAME' "${project_dirs[$i]}/manifest.yaml")
 
   echo "Merging $project_name: $project_branch..."
   if ! git merge --no-ff --no-commit "$project_branch"; then
@@ -150,10 +151,10 @@ sleep 10   # avoid git timeout-by-rate-limiting
 
 
 echo "Creating release tags..."
-for project_name in "${!release_branches[@]}"; do
-  project_branch="${release_branches[$project_name]}"
+for ((i=0; i<release_count; i++)); do
+  project_branch="${release_branches[$i]}"
   project_version=$(echo "$project_branch" | awk -F "/" '{print $NF}')
-  project_dir="${project_dirs[$project_name]}"
+  project_dir="${project_dirs[$i]}"
 
   git checkout $project_branch
   new_tag="tags/$project_name/release/$project_version"
