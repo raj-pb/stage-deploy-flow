@@ -51,6 +51,8 @@ jobs:
       - run:
           name: Bump release candidates tags for release branches
           command: |
+            ./infra/bin/test.sh
+            echo "${SLACK_PLACEHOLDER}", "$target_project"
             pushd rabbit_project
             pip install -q semver gitpython
             cd ../infra

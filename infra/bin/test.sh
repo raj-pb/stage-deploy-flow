@@ -32,4 +32,5 @@ for project_name in "${projects[@]}"; do
   echo "going ahead for $project_name"
 done
 
-echo "export SLACK_PLACEHOLDER=aau" >> $BASH_ENV
+papaya="ada"
+echo "export SLACK_PLACEHOLDER=aau $papaya" >> $BASH_ENV
