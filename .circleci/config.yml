@@ -46,10 +46,12 @@ jobs:
           name: Provide template in bash env
           command: |
             CIRCLE_WORKING_DIRECTORY23=$(pwd)
+            echo $CIRCLE_WORKING_DIRECTORY23
             echo 'export SLACK_FAIL=$(cat "$CIRCLE_WORKING_DIRECTORY23"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - run:
           name: Bump release candidates tags for release branches
           command: |
+            echo $CIRCLE_WORKING_DIRECTORY23
             pushd rabbit_project
             pip install -q semver gitpython
             cd ../infra
