@@ -74,6 +74,12 @@ jobs:
           command: |
             echo << pipeline.parameters.action >>
             ./infra/bin/test.sh -p << pipeline.parameters.action >>
+      - run:
+          name: Provide template in bash env
+          command: echo 'export SLACK_FAIL=$(cat ../infra/slack-templates/send_slack.json)' >> $BASH_ENV
+      - slack/notify:
+          event: pass
+          template: SLACK_FAIL
 
   build-prod:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
