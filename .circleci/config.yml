@@ -43,6 +43,9 @@ jobs:
               echo "RRRRT"
             fi
       - run:
+          name: Provide template in bash env
+          command: echo 'export SLACK_FAIL=$(cat "$CIRCLE_WORKING_DIRECTORY"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
+      - run:
           name: Bump release candidates tags for release branches
           command: |
             pushd rabbit_project
@@ -52,9 +55,6 @@ jobs:
             ../infra/bin/deploy_release_branch.sh
             popd
             pwd
-      - run:
-          name: Provide template in bash env
-          command: echo 'export SLACK_FAIL=$(cat "$CIRCLE_WORKING_DIRECTORY"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - slack/notify:
           event: fail
           template: SLACK_FAIL
