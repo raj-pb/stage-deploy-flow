@@ -5,7 +5,7 @@ version: 2.1
 parameters:
   action:
     type: string
-    default: "false"
+    default: ""
   release:
     type: boolean
     default: false
@@ -49,14 +49,6 @@ jobs:
             pip install -q semver gitpython
             ../infra/bin/deploy_release_branch.sh
       - run:
-          name: Print env
-          command: |
-            if [[ -n "$RELEASE_VERSION" ]]; then
-              echo "RRR, $RELEASE_VERSION"
-            else
-              echo "RRRRT"
-            fi
-      - run:
           name: Provide template in bash env
           command: echo 'export SLACK_FAIL=$(cat ../infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - slack/notify:
@@ -81,17 +73,7 @@ jobs:
           name: Bump release candidates tags for release branches
           command: |
             echo << pipeline.parameters.action >>
-            git config --global user.email "test@murine.org"
-            git config --global user.name "Test Users"
-            git clone git@github.com:murine-org/murine.git
-            pip install -q semver gitpython
-            ./infra/bin/deploy_release_branch.sh
-      - slack/notify:
-          event: fail
-          template: MY_ORB_TEMPLATE
-      - slack/notify:
-          event: pass
-          template: MY_ORB_TEMPLATE
+            ./infra/bin/test.sh -p << pipeline.parameters.action >>
 
   build-prod:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
@@ -117,9 +99,12 @@ workflows:
           context: 
             - slack-secrets
       - build-prod:
+          # ignore all branches only build on tags
           filters:
             tags:
               only: /^.+\release\/[0-9]+\.[0-9]+\.[0-9]+$/
+            branches:
+              ignore: /.*/
 
   pappa-workflow:
     when:
