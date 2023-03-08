@@ -128,4 +128,3 @@ workflows:
       - say-bye:
           context:
             - slack-secrets
-]
