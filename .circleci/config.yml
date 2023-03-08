@@ -93,6 +93,19 @@ jobs:
           event: pass
           template: MY_ORB_TEMPLATE
 
+  build-prod:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Echoing Tag
+          command: |
+            echo "Tag is $CIRCLE_TAG"
+            cat ./rabbit_project/VERSION
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -111,3 +124,10 @@ workflows:
       - say-bye:
           context:
             - slack-secrets
+
+  prod-build-workflow:
+    filters:
+      tags:
+        only: /^.+\release\/[0-9]+\.[0-9]+\.[0-9]+$/
+    jobs:
+      - build-prod
