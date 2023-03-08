@@ -32,5 +32,6 @@ for project_name in "${projects[@]}"; do
   echo "going ahead for $project_name"
 done
 
-papaya="ada"
-echo "export SLACK_PLACEHOLDER=\"The following projects are built and packed : $(echo $papaya), and are ready to be released. Review and merge the created PR to finish the staging flow.\"" >> $BASH_ENV
+slack_branches=${projects[@]}
+pr_url=$(gh pr view --json url | jq -r \".url\")
+echo "export SLACK_MRKDWN_BODY=The following projects are built and packed : $(echo $slack_branches), and are ready to be released. Review and merge the created PR : $(echo $pr_url) to finish the staging flow." >> $BASH_ENV
