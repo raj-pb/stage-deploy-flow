@@ -45,7 +45,8 @@ jobs:
       - run:
           name: Provide template in bash env
           command: |
-            ls /home/project/
+            pwd
+            ls ~/project/
             echo 'export SLACK_FAIL=$(cat /home/project/infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - run:
           name: Bump release candidates tags for release branches
