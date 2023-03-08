@@ -73,7 +73,7 @@ release_notes() {
 declare -a release_branches
 declare -a project_dirs
 
-find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
+while read -r project_dir; do
   if [ -f "$project_dir/manifest.yaml" ]; then
     project_name=$(yq eval '.PROJECT_NAME' "$project_dir/manifest.yaml")
     project_branch=$(git branch -r | grep "$project_name/release/" | sed 's/^..//' | sort -V | tail -n1)
@@ -92,13 +92,13 @@ find "$root_dir" -type d -mindepth 1 -maxdepth 5 | while read -r project_dir; do
 
     # Mark the branch for release
     if [[ -z "$DRY_RUN" ]]; then
-      release_branches+="$project_branch"
-      project_dirs+="$project_dir"
+      release_branches+=("$project_branch")
+      project_dirs+=("$project_dir")
     else
       echo "$project_name (dry run): found $project_branch to be merged."
     fi
   fi
-done
+done < <(find "$root_dir" -type d -mindepth 1 -maxdepth 5)
 
 
 release_count=${#release_branches[@]}
@@ -153,8 +153,9 @@ sleep 10   # avoid git timeout-by-rate-limiting
 echo "Creating release tags..."
 for ((i=0; i<release_count; i++)); do
   project_branch="${release_branches[$i]}"
-  project_version=$(echo "$project_branch" | awk -F "/" '{print $NF}')
   project_dir="${project_dirs[$i]}"
+  project_name=$(yq eval '.PROJECT_NAME' "$project_dir/manifest.yaml")
+  project_version=$(echo "$project_branch" | awk -F "/" '{print $NF}')
 
   git checkout $project_branch
   new_tag="tags/$project_name/release/$project_version"
