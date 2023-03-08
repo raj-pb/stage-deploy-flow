@@ -44,7 +44,10 @@ jobs:
             fi
       - run:
           name: Provide template in bash env
-          command: echo 'export SLACK_FAIL=$(cat "$CIRCLE_WORKING_DIRECTORY"/stage-deploy-flow/infra/slack-templates/send_slack.json)' >> $BASH_ENV
+          command: |
+            pwd
+            ls -al
+            echo 'export SLACK_FAIL=$(cat "$CIRCLE_WORKING_DIRECTORY"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - run:
           name: Bump release candidates tags for release branches
           command: |
