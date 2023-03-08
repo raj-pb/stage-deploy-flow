@@ -48,6 +48,7 @@ jobs:
             pushd rabbit_project
             pwd
             pip install -q semver gitpython
+            cd ../infra
             ../infra/bin/deploy_release_branch.sh
             popd
             pwd
