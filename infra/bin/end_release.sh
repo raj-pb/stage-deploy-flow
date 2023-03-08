@@ -102,7 +102,7 @@ done
 
 
 release_count=${#release_branches[@]}
-if [ $release_count = 0 ]; do
+if [ $release_count -eq 0 ]; do
   echo "No release"
   exit 0
 fi
