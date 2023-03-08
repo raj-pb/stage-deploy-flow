@@ -45,10 +45,10 @@ jobs:
       - run:
           name: Provide template in bash env
           command: |
-            CIRCLE_WORKING_DIRECTORY=${pwd}
+            CIRCLE_WORKING_DIRECTORY=$(pwd)
             ls -al
-            ls -al "$CIRCLE_WORKING_DIRECTORY"
-            echo 'export SLACK_FAIL=$(cat "$CIRCLE_WORKING_DIRECTORY"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
+            ls -al "$(pwd)"
+            echo 'export SLACK_FAIL=$(cat "$(pwd)"/infra/slack-templates/send_slack.json)' >> $BASH_ENV
       - run:
           name: Bump release candidates tags for release branches
           command: |
