@@ -5,7 +5,7 @@ ENV ?= dev
 CURRENT_VERSION = $(shell cat VERSION)
 
 
-# the '-' prefix makes it ignore import errors (i.e. when run within a docker container)
+# the '-' prefix makes it ignore import errors (i.e. when run within a docker container) emo
 -include $(ROOT)/infra/env.mk
 -include $(ROOT)/infra/docker.mk
 
