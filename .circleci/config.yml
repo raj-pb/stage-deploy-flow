@@ -5,7 +5,7 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-setup: << pipeline.parameters.run-setup >>
+setup: true
 
 # All pipeline parameters need to be defined equally both for the setup workflow and main workflows
 # These parameters will be passed to both of them
