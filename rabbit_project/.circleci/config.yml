@@ -1,0 +1,109 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+parameters:
+  action:
+    type: string
+    default: "\"\""
+  release:
+    type: boolean
+    default: false
+  start_dry_run:
+    type: boolean
+    default: false
+
+orbs:
+  slack: circleci/slack@4.9.3
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  say-hello:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: "Say hello"
+          command: "echo Hello, World! && ls infra/bin"
+      - run:
+          name: Print env
+          environment:
+            DRY_RUN: <<pipeline.parameters.start_dry_run>>
+          command: |
+            if [[ "$DRY_RUN" = 1 ]]; then
+              echo "drt ru bn, $DRY_RUN"
+            else
+              echo "RRRRT"
+            fi
+      - slack/notify:
+          event: fail
+          template: SLACK_FAIL
+      - slack/notify:
+          event: pass
+          template: SLACK_FAIL
+
+  say-bye:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            # github-murine-bot
+            - "04:28:22:bd:ef:ff:70:82:02:e5:0f:d1:2c:6f:60:f7"
+      - run:
+          name: Bump release candidates tags for release branches
+          command: |
+            echo << pipeline.parameters.action >>
+            ./infra/bin/test.sh -p << pipeline.parameters.action >>
+            echo "${SLACK_PLACEHOLDER}", "$target_project"
+      - run:
+          name: Provide template in bash env
+          command: echo 'export SLACK_FAIL=$(cat ./infra/slack-templates/send_slack.json)' >> $BASH_ENV
+      - slack/notify:
+          event: pass
+          template: SLACK_FAIL
+
+  build-prod:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Echoing Tag
+          command: |
+            echo "Tag is $CIRCLE_TAG"
+            cat ./rabbit_project/VERSION
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  say-hello-workflow:
+    when:
+      equal: [ false, << pipeline.parameters.release >> ]
+    jobs:
+      - say-hello:
+          context:
+            - slack-secrets
+      - build-prod:
+          # ignore all branches only build on tags
+          filters:
+            tags:
+              only: /^.+\/release\/[0-9]+\.[0-9]+\.[0-9]+$/
+            branches:
+              ignore: /.*/
+
+  pappa-workflow:
+    when:
+      equal: [ true, << pipeline.parameters.release >> ]
+    jobs:
+      - say-bye:
+          context:
+            - slack-secrets
