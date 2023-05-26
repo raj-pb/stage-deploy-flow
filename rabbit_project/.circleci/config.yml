@@ -96,7 +96,7 @@ workflows:
           # ignore all branches only build on tags
           filters:
             tags:
-              only: /^.+\/release\/[0-9]+\.[0-9]+\.[0-9]+$/
+              only: /^.*\/app\/release\/[0-9]+\.[0-9]+\.[0-9]+$/
             branches:
               ignore: /.*/
 
