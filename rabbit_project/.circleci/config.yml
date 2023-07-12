@@ -95,6 +95,7 @@ workflows:
       - say-hello:
           context:
             - slack-secrets
+            - aws
       - build-prod:
           context: slack-secrets
           requires:
