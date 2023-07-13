@@ -42,7 +42,7 @@ jobs:
               echo "RRRRT"
             fi
       - run:
-          name: "Build Prod Artisfacts"
+          name: "Build Prod Artifacts"
           command: |
             cd rabbit_project
             ../infra/bin/tag_release_image.sh
