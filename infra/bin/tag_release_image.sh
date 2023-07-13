@@ -17,12 +17,11 @@ echo "Checking for release tag: $release_version"
 latest_tags=$(aws ecr describe-images --repository-name "$docker_image_name" \
     --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags')
 
-echo "$latest_tags are altest tags"
 if [[ $latest_tags =~ (^|\W)"$release_version"($|\W) ]]; then
     required_tag="${BASH_REMATCH[0]}"
 fi
 
-if [ -n "$required_tag" ]; then
+if [ -z "$required_tag" ]; then
     echo "Latest build tags in stage $latest_tags don't include the needed version $release_version."
     exit 1
 fi
