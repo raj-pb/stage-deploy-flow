@@ -45,7 +45,7 @@ jobs:
           name: "Build Prod Artifacts"
           command: |
             cd rabbit_project
-            ../infra/bin/tag_release.sh
+            ../infra/bin/tag_release_image.sh
       - slack/notify:
           event: fail
           template: SLACK_FAIL
