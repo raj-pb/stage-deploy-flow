@@ -15,17 +15,22 @@ echo "Checking for release tag: $release_version"
 
 # Retrieve the image details of the last pushed image
 latest_tags=$(aws ecr describe-images --repository-name "$docker_image_name" \
-    --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags')
+    --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags' \
+    --output json | jq -r '.[]')
 
-if [[ $latest_tags =~ (^|\W)"$release_version"($|\W) ]]; then
-    required_tag="${BASH_REMATCH[0]}"
-fi
+for latest_tag in "${latest_tags[@]}"; do
+    echo "$latest_tag"
+    if [[ "$latest_tag" =~ $release_version ]]; then
+        required_tag="$latest_tag"
+        break
+    fi
+done
 
 if [ -z "$required_tag" ]; then
     echo "Latest build tags in stage $latest_tags don't include the needed version $release_version."
     exit 1
 fi
 
-echo "$required_tag"
+echo "Latest tag is $required_tag"
 echo "release-$release_version"
 #IMAGE_TAG=$required_tag NEW_TAG=release-$release_version make docker-image-retag
